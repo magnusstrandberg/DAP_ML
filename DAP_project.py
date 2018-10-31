@@ -11,6 +11,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import log_loss
 import itertools
 
 
@@ -25,22 +26,24 @@ Y = np.ravel(np.asarray(pd.read_csv("train_labels.csv")))
 test = np.asarray(pd.read_csv("Test.csv"))
 
 #Multiclass learning using OvO and linearSVC
-OvOclf = OneVsOneClassifier(LinearSVC(random_state=0))
-a = np.reshape(np.asarray(list(range(1,len(test)+1))),(6544,1))
-b = np.reshape(np.asarray(OvOclf.fit(X,Y).predict(test)),(6544,1))
-OvOclf.fit(X,Y).predict(X)
+#OvOclf = OneVsOneClassifier(LinearSVC(random_state=0))
+#a = np.reshape(np.asarray(list(range(1,len(test)+1))),(6544,1))
+#b = np.reshape(np.asarray(OvOclf.fit(X,Y).predict(test)),(6544,1))
+#OvOclf.fit(X,Y).predict(X)
 #print('Multiclass, OvO, linear decision function: ' +str(clf.decision_function(X)))
-print('Multiclass, OvO, linear score: '+str(OvOclf.score(X,Y)))
+#print('Multiclass, OvO, linear score: '+str(OvOclf.score(X,Y)))
 
 #logloss
-clf = CalibratedClassifierCV(LinearSVC(random_state=0,class_weight='balanced'))
+clf = CalibratedClassifierCV(LinearSVC(random_state=0,class_weight='balanced',C=3.5,max_iter=2000),cv=5)
 a = np.reshape(np.asarray(list(range(1,len(test)+1))),(6544,1))
 b = np.reshape(np.asarray(clf.fit(X,Y).predict(test)),(6544,1))
 c = np.reshape(np.asarray(list(range(1,len(test)+1))),(6544,1))
 d = np.reshape(np.asarray(clf.fit(X,Y).predict_proba(test)),(6544,10))
 print(d)
 clf.fit(X,Y).predict(X)
+e = clf.predict_proba(X)
 print('Multiclass, OvO, linear logloss for train set: ' +str(clf.predict_proba(test)))
+print('logloss: ' + str(log_loss(Y, e)))
 print('Score: '+str(clf.score(X,Y)))
 
 
