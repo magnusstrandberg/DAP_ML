@@ -2,4 +2,4 @@
 
 2. 	Upload the folder content to the jupyter server, 
 	matlab-sripts not needed to execute the pyhton code. 
-	The rest is!
+	The rest is mandatory!
